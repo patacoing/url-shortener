@@ -1,19 +1,25 @@
 from fastapi.testclient import TestClient
 from fastapi import status
 import pytest
-from pydantic_core import Url
 
 from app.database.redis import RedisDatabase
 from app.main import app
 from app.service.url_service import UrlService
+from app.settings import settings
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def database():
-    return RedisDatabase(
-        host="localhost",
-        port=6379,
-        db=0
+    db = RedisDatabase(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        db=settings.REDIS_DB,
+        password=settings.REDIS_PASSWORD
     )
+
+    yield db
+
+    db.redis.flushall()
+
 
 @pytest.fixture
 def url_service(monkeypatch, database):

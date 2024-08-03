@@ -5,7 +5,7 @@ class UrlSettings(BaseSettings):
     URL_VALIDITY_TIME: int = 60 * 60
 
 class RedisSettings(BaseSettings):
-    REDIS_HOST: str
+    REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
     REDIS_PASSWORD: str
