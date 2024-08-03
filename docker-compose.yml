@@ -6,6 +6,8 @@ services:
     volumes:
       - ./data:/data
     command: redis-server
+    networks:
+      - url-shortener
   app:
     build: .
     ports:
@@ -15,6 +17,12 @@ services:
     environment:
       REDIS_HOST: "${REDIS_HOST:-redis}"
       REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
+    networks:
+      - url-shortener
 
 volumes:
     data:
+
+networks:
+  url-shortener:
+    driver: bridge
