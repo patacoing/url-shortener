@@ -12,8 +12,8 @@ jobs:
 
       - name: build image && run
         run: |
-          docker-compose up -d --build
+          docker compose up -d --build
 
       - name: run tests
         run: |
-          docker-compose exec -T app python -m pytest
+          docker compose exec -T app python -m pytest
