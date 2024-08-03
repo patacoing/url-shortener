@@ -27,4 +27,16 @@ class RedisDatabase(DatabaseInterface):
             ex=settings.URL_VALIDITY_TIME
         )
 
+    def get_call_count(self, host: str) -> int:
+        result = self.redis.get(host)
+        return int(result) if result else 0
+
+    def increase_call_count(self, host: str) -> bool:
+        count = self.get_call_count(host)
+        return self.redis.set(
+            name=host,
+            value=count+1,
+            keepttl=True
+        )
+
 database = RedisDatabase()

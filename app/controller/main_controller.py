@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Response, status, Request
 from pydantic_core import Url
 
 from app.service.url_service import UrlService, get_url_service
@@ -19,5 +19,5 @@ def get_url(key: str, response: Response, url_service: UrlService = Depends(get_
     summary="Shorten a URL",
     response_model=str,
 )
-def shorten_url(url: Url, url_service: UrlService = Depends(get_url_service)):
-    return url_service.shorten_and_save_url(url)
+def shorten_url(url: Url, request: Request, url_service: UrlService = Depends(get_url_service)):
+    return url_service.shorten_and_save_url(url, request)

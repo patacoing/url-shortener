@@ -4,6 +4,10 @@ class UrlSettings(BaseSettings):
     URL_LENGTH: int = 5
     URL_VALIDITY_TIME: int = 60 * 60
 
+class RateLimitSettings(BaseSettings):
+    RATE_LIMIT: int = 10
+    RATE_LIMIT_TIME: int = 60
+
 class RedisSettings(BaseSettings):
     REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379
@@ -18,6 +22,7 @@ class Settings(
     UrlSettings,
     RedisSettings,
     AppSettings,
+    RateLimitSettings
 ):
     class Config(SettingsConfigDict):
         env_file = ".env"

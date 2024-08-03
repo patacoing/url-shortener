@@ -1,16 +1,18 @@
 from abc import ABC, abstractmethod
 from pydantic_core import Url
-from fastapi import Response
+from fastapi import Response, Request
 from fastapi.responses import RedirectResponse
 
 from app.database.database_interface import DatabaseInterface
 from app.database.redis import database
+from app.exceptions.call_count_exceeded_exception import CallCountExceededException
 from app.exceptions.key_not_found_exception import KeyNotFoundException
 from app.service.key_generator_service import KeyGeneratorService
+from app.service.rate_limit_service import RateLimitServiceInterface, RateLimitService
 
 
 class UrlServiceInterface(ABC):
-    def __init__(self, database: DatabaseInterface):
+    def __init__(self, database: DatabaseInterface,):
         self.database = database
 
     @abstractmethod
@@ -37,15 +39,16 @@ class UrlServiceInterface(ABC):
     def save_url(self, key: str, url: str) -> str:
         """
         Save a URL in the database
-        :param key:
-        :param url:
-        :return:
+        :param key: the generated key
+        :param url: the url as a string
+        :return: the url as a string
         """
 
     @abstractmethod
-    def shorten_and_save_url(self, url: Url) -> str:
+    def shorten_and_save_url(self, url: Url, request: Request) -> str:
         """
-        Shorten and save a URL
+        Shorten and save a URL. It will before check whether the
+        number of client calls is above the limit or not
         :param url: The URL to shorten and save
         :return: The shortened URL
         """
@@ -66,7 +69,14 @@ class UrlService(UrlServiceInterface):
         self.database.save_url(key, url)
         return url
 
-    def shorten_and_save_url(self, url: Url) -> str:
+    def shorten_and_save_url(self, url: Url, request: Request) -> str:
+        host = request.client.host
+        rate_limit_service: RateLimitServiceInterface = RateLimitService(host, self.database)
+
+        if rate_limit_service.is_client_above_limit():
+            raise CallCountExceededException()
+
+        rate_limit_service.increase_client_call_count()
         key = self.shorten_url(url)
         self.save_url(key, str(url))
         return key
