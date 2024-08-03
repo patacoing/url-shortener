@@ -1,3 +1,6 @@
-fastapi
-pydantic-settings
-redis
+fastapi==0.112.0
+pydantic-settings==2.4.0
+redis==5.1.0b7
+pytest==8.3.2
+pydantic_core~=2.20.1
+uvicorn~=0.30.3

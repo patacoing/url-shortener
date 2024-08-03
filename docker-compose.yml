@@ -6,6 +6,15 @@ services:
     volumes:
       - ./data:/data
     command: redis-server
+  app:
+    build: .
+    ports:
+      - "3000:8000"
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: "${REDIS_HOST:-redis}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
 
 volumes:
     data:

@@ -1,12 +1,12 @@
-from typing import Union
 from fastapi import FastAPI
+import uvicorn
 
 from app.settings import settings
-from app.database.redis import redis
+from app.controller.main_controller import router as main_router
 
 app = FastAPI()
 
-@app.get("/")
-def read_redis():
-    redis.set("key", "value")
-    return redis.get("key")
+app.include_router(main_router, prefix="")
+
+if __name__ == "__main__":
+    uvicorn.run(app, host=settings.HOST, port=settings.PORT)

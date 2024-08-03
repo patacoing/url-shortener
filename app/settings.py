@@ -10,10 +10,14 @@ class RedisSettings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_PASSWORD: str
 
+class AppSettings(BaseSettings):
+    HOST: str = "0.0.0.0"
+    PORT: int = 8000
+
 class Settings(
     UrlSettings,
     RedisSettings,
-    BaseSettings
+    AppSettings,
 ):
     class Config(SettingsConfigDict):
         env_file = ".env"
